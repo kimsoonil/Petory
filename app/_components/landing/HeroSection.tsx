@@ -54,7 +54,7 @@ export default function HeroSection() {
        {/* CTA 버튼들 */}
        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
           <Link
-            href="/app"
+            href="/walk"
             className="group bg-gradient-to-r from-primary to-primary-dark text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center gap-2 hover:scale-[1.03]"
           >
             시작하기

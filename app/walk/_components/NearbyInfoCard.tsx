@@ -1,7 +1,7 @@
 "use client";
 
-import { Landmark, Position } from "@/app/walk/_types";
-import { calculateDistance } from "@/app/walk/_utils/distanceCalculator";
+import { Landmark, Position } from "../_types";
+import { calculateDistance } from "../_utils/distanceCalculator";
 
 type NearbyInfoCardProps = {
   landmarks: Landmark[];
