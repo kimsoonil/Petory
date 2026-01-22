@@ -1,6 +1,6 @@
-import HeroSection from "./_components/landing/HeroSection";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return <HeroSection />;
+  redirect("/landing");
 }
 

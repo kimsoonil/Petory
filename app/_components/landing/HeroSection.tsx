@@ -36,38 +36,38 @@ export default function HeroSection() {
             Petory
           </p>
 
-        {/* 서브 타이틀 */}
-        <p className="text-xl md:text-2xl text-white mb-4 font-medium animate-slide-up drop-shadow">
-          반려동물과 함께하는
-          <span className="text-white">스마트한 일상</span>
-        </p>
+          {/* 서브 타이틀 */}
+          <p className="text-xl md:text-2xl text-white mb-4 font-medium animate-slide-up drop-shadow">
+            반려동물과 함께하는
+            <span className="text-white">스마트한 일상</span>
+          </p>
 
-        <p className="text-lg text-white/85 mb-12 animate-slide-up drop-shadow">
-          산책부터 건강 관리까지,
-          모든 것을 한 곳에서
-        </p>
+          <p className="text-lg text-white/85 mb-12 animate-slide-up drop-shadow">
+            산책부터 건강 관리까지,
+            모든 것을 한 곳에서
+          </p>
 
-       
+
         </div>
 
-      {/* 스크롤 인디케이터 */}
-       {/* CTA 버튼들 */}
-       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
+        {/* 스크롤 인디케이터 */}
+        {/* CTA 버튼들 */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
           <Link
-            href="/walk"
+            href="/app"
             className="group bg-gradient-to-r from-primary to-primary-dark text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center gap-2 hover:scale-[1.03]"
           >
             시작하기
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
-      <button
-        onClick={scrollToFeatures}
-        className="absolute bottom-8 animate-bounce hover:scale-110 transition-transform z-10"
-        aria-label="더 알아보기"
-      >
-        <ChevronDown className="w-6 h-6 text-white/80 drop-shadow" />
-      </button>
+        <button
+          onClick={scrollToFeatures}
+          className="absolute bottom-8 animate-bounce hover:scale-110 transition-transform z-10"
+          aria-label="더 알아보기"
+        >
+          <ChevronDown className="w-6 h-6 text-white/80 drop-shadow" />
+        </button>
       </div>
     </section>
   );
