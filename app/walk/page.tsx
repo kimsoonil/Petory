@@ -16,15 +16,18 @@ import WalkReport from "./_components/WalkReport";
 import { Landmark } from "./_types";
 import { WALK_CONFIG } from "./_constants";
 
+// [Flow 1] 산책 탭 페이지 진입
 export default function WalkPage() {
   const [showLandmarkPopup, setShowLandmarkPopup] = useState<string | null>(null);
   const [map, setMap] = useState<any>(null);
   const [landmarks, setLandmarks] = useState<Landmark[]>([]);
 
+  // [Flow 2] 현재 사용자 위치 정보(GPS) 가져오기 시작
   const { position: currentPosition, loading } = useGeolocation();
+  // [Flow 3] 산책 트래킹 상태 관리 훅 초기화
   const { isWalking, walkPath, walkStats, toggleWalk } = useWalkTracking(currentPosition);
 
-  // 랜드마크 생성
+  // [Flow 4] 랜드마크 생성 (위치 정보가 확보되면 실행)
   useEffect(() => {
     if (currentPosition) {
       const generatedLandmarks = generateNearbyLandmarks(currentPosition);
@@ -69,7 +72,7 @@ export default function WalkPage() {
       </header>
 
       <main className="flex-1 relative overflow-hidden">
-        {/* 지도 영역 */}
+        {/* [Flow 5] 지도 영역 렌더링 (위치 정보, 경로, 랜드마크 데이터 전달) */}
         <WalkMap
           currentPosition={currentPosition}
           walkPath={walkPath}

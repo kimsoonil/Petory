@@ -26,13 +26,16 @@ export default function WalkMap({
   const polylineRef = useRef<any>(null);
   const circlesRef = useRef<any[]>([]);
 
+  // [Flow 6] 지도 초기화 및 설정
   useEffect(() => {
+    // 지도가 로드되지 않았거나 window.kakao 객체가 없으면 중단
     if (!mapRef.current || !window.kakao?.maps) return;
 
     if (!map) {
       // 지도 초기화
       const kakao = window.kakao;
       const container = mapRef.current;
+      // [Flow 7] 지도 생성 (중심 좌표 및 확대 레벨 설정)
       const options = {
         center: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
         level: 3,
@@ -163,8 +166,9 @@ export default function WalkMap({
   }, [map, walkPath]);
 
   return (
+    // [Flow 5-1] 카카오 지도 스크립트 로더 (스크립트 로드 완료 후 자식 컴포넌트 렌더링)
     <KakaoMapLoader>
-      <div ref={mapRef} className="w-full h-full" />
+      <div ref={mapRef} className="absolute inset-0 w-full h-full" />
     </KakaoMapLoader>
   );
 }
