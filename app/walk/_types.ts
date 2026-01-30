@@ -5,7 +5,7 @@ export interface Position {
 
 export interface Landmark {
   id: string;
-  type: "cafe" | "hospital" | "restricted";
+  type: "cafe" | "hospital" | "restricted" | "beauty" | "park";
   name: string;
   description: string;
   icon: string;
@@ -18,4 +18,3 @@ export interface WalkStats {
   points: number;
   steps?: number;
 }
-

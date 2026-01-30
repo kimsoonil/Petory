@@ -13,7 +13,8 @@ interface WalkMapProps {
   onLandmarkClick: (landmarkId: string) => void;
 }
 
-export default function WalkMap({
+// 실제 지도 로직을 담당하는 내부 컴포넌트
+function MapContent({
   currentPosition,
   walkPath,
   landmarks,
@@ -28,25 +29,40 @@ export default function WalkMap({
 
   // [Flow 6] 지도 초기화 및 설정
   useEffect(() => {
-    // 지도가 로드되지 않았거나 window.kakao 객체가 없으면 중단
-    if (!mapRef.current || !window.kakao?.maps) return;
+    console.log("[MapContent] Initializing map...", {
+      mapRef: !!mapRef.current,
+      kakao: !!window.kakao,
+    });
+
+    if (!mapRef.current || !window.kakao?.maps) {
+      console.error(
+        "[MapContent] CRITICAL: Map container or Kakao SDK missing inside MapContent",
+        {
+          mapRef: mapRef.current,
+          kakao: window.kakao,
+        },
+      );
+      return;
+    }
 
     if (!map) {
       // 지도 초기화
+      console.log("[MapContent] Creating new map instance");
       const kakao = window.kakao;
       const container = mapRef.current;
-      // [Flow 7] 지도 생성 (중심 좌표 및 확대 레벨 설정)
       const options = {
         center: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
-        level: 3,
+        level: 5, // 한눈에 보이게 축소 (숫자가 클수록 축소됨)
       };
       const kakaoMap = new kakao.maps.Map(container, options);
+      console.log("[MapContent] Map created successfully");
       setMap(kakaoMap);
     } else {
       // 지도 중심 이동
+      console.log("[MapContent] Updating map center");
       const moveLatLon = new window.kakao!.maps.LatLng(
         currentPosition.lat,
-        currentPosition.lng
+        currentPosition.lng,
       );
       map.setCenter(moveLatLon);
     }
@@ -69,14 +85,11 @@ export default function WalkMap({
     const markerImage = new kakao.maps.MarkerImage(
       imageSrc,
       imageSize,
-      imageOption
+      imageOption,
     );
 
     const marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(
-        currentPosition.lat,
-        currentPosition.lng
-      ),
+      position: new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng),
       image: markerImage,
     });
     marker.setMap(map);
@@ -84,17 +97,50 @@ export default function WalkMap({
 
     // 랜드마크 마커
     landmarks.forEach((landmark) => {
-      let markerColor = "#FF9F43"; // 기본 (카페)
-      if (landmark.type === "hospital") markerColor = "#3B82F6";
-      if (landmark.type === "restricted") markerColor = "#EF4444";
+      // 마커 이미지 URL 설정
+      let markerImageSrc =
+        "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; // 기본 (카페 - 노란색 별)
+
+      if (landmark.type === "cafe") {
+        markerImageSrc = "https://t1.daumcdn.net/mapjsapi/images/marker.png"; // 파란색 기본 마커
+      }
+      if (landmark.type === "hospital") {
+        markerImageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/2018/pc/img/marker_spot.png"; // 파란 점
+      }
+      if (landmark.type === "beauty") {
+        // 미용실: 임시로 붉은색 핀 사용 (구분을 위해)
+        markerImageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png";
+      }
+      if (landmark.type === "park") {
+        // 공원: 파란색 B 마커 (구분을 위해)
+        markerImageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png";
+      }
+      if (landmark.type === "restricted") {
+        markerImageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png"; // 빨간색 마커
+      }
+
+      // 이미지 크기
+      const mkImageSize = new kakao.maps.Size(24, 35);
+      const mkImageOption = { offset: new kakao.maps.Point(12, 35) };
+
+      const mkImage = new kakao.maps.MarkerImage(
+        markerImageSrc,
+        mkImageSize,
+        mkImageOption,
+      );
 
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(
           landmark.position.lat,
-          landmark.position.lng
+          landmark.position.lng,
         ),
         map: map,
         title: landmark.name,
+        image: mkImage, // 커스텀 이미지 적용
       });
 
       kakao.maps.event.addListener(marker, "click", () => {
@@ -108,7 +154,7 @@ export default function WalkMap({
         const circle = new kakao.maps.Circle({
           center: new kakao.maps.LatLng(
             landmark.position.lat,
-            landmark.position.lng
+            landmark.position.lng,
           ),
           radius: 100,
           strokeWeight: 2,
@@ -139,9 +185,7 @@ export default function WalkMap({
     }
 
     const kakao = window.kakao;
-    const path = walkPath.map(
-      (pos) => new kakao.maps.LatLng(pos.lat, pos.lng)
-    );
+    const path = walkPath.map((pos) => new kakao.maps.LatLng(pos.lat, pos.lng));
 
     if (polylineRef.current) {
       polylineRef.current.setMap(null);
@@ -165,11 +209,16 @@ export default function WalkMap({
     };
   }, [map, walkPath]);
 
+  return <div ref={mapRef} className="absolute inset-0 w-full h-full" />;
+}
+
+export default function WalkMap(props: WalkMapProps) {
   return (
-    // [Flow 5-1] 카카오 지도 스크립트 로더 (스크립트 로드 완료 후 자식 컴포넌트 렌더링)
+    // [Flow 5-1] 카카오 지도 스크립트 로더
+    // KakaoMapLoader가 로딩을 완료하고 children을 렌더링할 때 MapContent가 마운트됨
+    // 따라서 MapContent 내부의 useEffect가 실행될 때는 이미 window.kakao가 로드된 상태임
     <KakaoMapLoader>
-      <div ref={mapRef} className="absolute inset-0 w-full h-full" />
+      <MapContent {...props} />
     </KakaoMapLoader>
   );
 }
-

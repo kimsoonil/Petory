@@ -54,6 +54,31 @@ export function generateNearbyLandmarks(currentPosition: Position): Landmark[] {
     });
   }
 
+  // 미용실 추가
+  landmarks.push({
+    id: "beauty-1",
+    type: "beauty",
+    name: "스타일멍냥",
+    description: "반려동물 전문 미용실",
+    icon: "✂️",
+    position: {
+      lat: currentPosition.lat + randomOffset(),
+      lng: currentPosition.lng + randomOffset(),
+    },
+  });
+
+  // 공원 추가
+  landmarks.push({
+    id: "park-1",
+    type: "park",
+    name: "푸른숨 공원",
+    description: "목줄 착용 필수 반려견 산책로",
+    icon: "🌳",
+    position: {
+      lat: currentPosition.lat + randomOffset(),
+      lng: currentPosition.lng + randomOffset(),
+    },
+  });
+
   return landmarks;
 }
-

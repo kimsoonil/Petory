@@ -18,14 +18,17 @@ import { WALK_CONFIG } from "./_constants";
 
 // [Flow 1] 산책 탭 페이지 진입
 export default function WalkPage() {
-  const [showLandmarkPopup, setShowLandmarkPopup] = useState<string | null>(null);
+  const [showLandmarkPopup, setShowLandmarkPopup] = useState<string | null>(
+    null,
+  );
   const [map, setMap] = useState<any>(null);
   const [landmarks, setLandmarks] = useState<Landmark[]>([]);
 
   // [Flow 2] 현재 사용자 위치 정보(GPS) 가져오기 시작
   const { position: currentPosition, loading } = useGeolocation();
   // [Flow 3] 산책 트래킹 상태 관리 훅 초기화
-  const { isWalking, walkPath, walkStats, toggleWalk } = useWalkTracking(currentPosition);
+  const { isWalking, walkPath, walkStats, toggleWalk } =
+    useWalkTracking(currentPosition);
 
   // [Flow 4] 랜드마크 생성 (위치 정보가 확보되면 실행)
   useEffect(() => {
@@ -42,7 +45,10 @@ export default function WalkPage() {
     landmarks.forEach((landmark) => {
       if (landmark.type === "cafe") {
         const distance = calculateDistance(currentPosition, landmark.position);
-        if (distance < WALK_CONFIG.landmarkPopupDistance && showLandmarkPopup !== landmark.id) {
+        if (
+          distance < WALK_CONFIG.landmarkPopupDistance &&
+          showLandmarkPopup !== landmark.id
+        ) {
           setShowLandmarkPopup(landmark.id);
         }
       }
@@ -50,6 +56,7 @@ export default function WalkPage() {
   }, [currentPosition, isWalking, landmarks, showLandmarkPopup]);
 
   if (loading || !currentPosition) {
+    console.log("[WalkPage] Waiting for geolocation...");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -60,6 +67,8 @@ export default function WalkPage() {
     );
   }
 
+  console.log("[WalkPage] Rendering WalkPage with position:", currentPosition);
+
   const selectedLandmark = landmarks.find((l) => l.id === showLandmarkPopup);
 
   return (
@@ -67,7 +76,9 @@ export default function WalkPage() {
       <header className="bg-white px-4 py-4 border-b border-gray-200 sticky top-0 z-[10]">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-900">산책</h1>
-          <Link href="/" className="text-primary font-medium text-sm">닫기</Link>
+          <Link href="/" className="text-primary font-medium text-sm">
+            닫기
+          </Link>
         </div>
       </header>
 
